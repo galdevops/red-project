@@ -7,16 +7,16 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 1. Clone the project, change into the directory and install the dependencies. the application run on port 3000
 
    ```bash
-   git clone https://github.com/philnash/react-express-starter.git
-   cd react-express-starter/backend
+   cd react-express-starter/server
    npm install
    npm start 
    ```
 
 2. to run the server enter the server folder and run these commands 
     ```bash
-   cd react-express-starter/server
-   nodemon index.js
+   cd react-express-starter/frontend
+   npm install
+   npm start 
 
    ```
 
