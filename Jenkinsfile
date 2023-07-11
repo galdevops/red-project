@@ -11,17 +11,17 @@ pipeline {
         }
         stage('build'){
             steps{
-                echo 'ls'
+                echo ls
             }
         }
         stage('test'){
             steps{
-                sh 'echo test'
+                sh cd backend
             }
         }
         stage('build image'){
             steps{
-                sh 'echo image'
+                echo ls
             }
         }
         stage('post'){
