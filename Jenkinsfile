@@ -11,7 +11,7 @@ pipeline {
         }
         stage('build'){
             steps{
-                echo ls
+                sh 'ls'
             }
         }
         stage('test'){
@@ -21,7 +21,7 @@ pipeline {
         }
         stage('build image'){
             steps{
-                echo ls
+                sh 'ls'
             }
         }
         stage('post'){
