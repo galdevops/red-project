@@ -16,7 +16,7 @@ pipeline {
         }
         stage('test'){
             steps{
-                sh cd backend
+                sh 'cd backend'
             }
         }
         stage('build image'){
