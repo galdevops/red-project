@@ -34,11 +34,6 @@ pipeline {
                 sh 'docker push galdevops/biu12_red_frontend'
             }
         }
-        post {
-            always {
-                sh 'docker logout'
-            }
-        }
         stage('test'){
             steps{
                 sh 'cd frontend/src'
@@ -53,6 +48,11 @@ pipeline {
             steps{
                 sh 'echo post'
             }
+        }
+    }
+    post {
+        always {
+            sh 'docker logout'
         }
     }
 }
