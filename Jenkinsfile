@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+    }
     stages {
         stage ('checkout') {
             steps{
@@ -8,7 +11,7 @@ pipeline {
         }
         stage('build'){
             steps{
-                sh 'echo build'
+                echo 'ls'
             }
         }
         stage('test'){
