@@ -11,12 +11,12 @@ pipeline {
         }
         stage('build backend'){
             steps{
-                sh 'cd server && docker build -t galdevops/biu12_red_backend -f server/Dockerfile .'
+                sh 'cd server && docker build -t galdevops/biu12_red_backend .'
             }
         }
         stage('build frontend'){
             steps{
-                sh 'cd frontend && docker build -t galdevops/biu12_red_frontend -f frontend/Dockerfile .'
+                sh 'cd frontend && docker build -t galdevops/biu12_red_frontend .'
             }
         }
         stage('Login dockerhub') {
