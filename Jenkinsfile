@@ -22,6 +22,16 @@ pipeline {
                 sh "terraform apply -no-color -auto-approve -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
             }
         }
+        stage('EC2 Wait'){
+            steps{
+                sh "aws ec2 wait instance-status-ok --region us-east-1"
+            }
+        }
+        stage('Print IP'){
+            steps{
+                sh "cat aws_hosts"
+            }
+        }
         stage('TF DESTROY'){
             steps{
                 sh "terraform destroy -no-color -auto-approve -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
