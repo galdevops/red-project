@@ -5,7 +5,6 @@ pipeline {
         TF_CLI_CONFIG_FILE = credentials('tfcloudcreds')
         ACCESS_KEY = credentials('aws-access')
         SECRET_KEY = credentials('aws-sec')
-        KEY_PAIR = credentials('jenkey')
     }
     stages {
         stage('TF INIT'){
