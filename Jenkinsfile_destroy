@@ -12,16 +12,6 @@ pipeline {
                 sh 'terraform init -no-color'
             }
         }
-        stage('TF PLAN'){
-            steps{
-                sh "terraform plan -no-color -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
-            }
-        }
-        stage('TF APPLY'){
-            steps{
-                sh "terraform apply -no-color -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
-            }
-        }
         stage('TF DESTROY'){
             steps{
                 sh "terraform destroy -no-color -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
