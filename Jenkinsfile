@@ -12,6 +12,11 @@ pipeline {
                 sh 'terraform init -no-color'
             }
         }
+        stage('TF DESTROY'){
+            steps{
+                sh "terraform destroy -no-color -auto-approve -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
+            }
+        }
         stage('TF PLAN'){
             steps{
                 sh "terraform plan -no-color -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
@@ -24,7 +29,7 @@ pipeline {
         }
         stage('EC2 Wait'){
             steps{
-                sh "aws ec2 wait instance-status-ok --region us-east-1"
+                sh "AWS_ACCESS_KEY_ID=${env.ACCESS_KEY} AWS_SECRET_ACCESS_KEY=${env.SECRET_KEY} aws ec2 wait instance-status-ok --region us-east-1"
             }
         }
         stage('Print IP'){
