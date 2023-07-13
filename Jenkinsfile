@@ -15,7 +15,7 @@ pipeline {
         }
         stage('TF PLAN'){
             steps{
-                sh "terraform plan -no-color -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}' -var-file 'public_key_pair=${env.KEY_PAIR}'"
+                sh "terraform plan -no-color -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
             }
         }
     }

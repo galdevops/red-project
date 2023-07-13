@@ -6,10 +6,10 @@ resource "random_id" "mtc_mode_id" {
 
 
 # Create a key pair for ssh connection
-resource "aws_key_pair" "mtc_auth" {
-    key_name = var.key_name
-    public_key = var.public_key_pair
-}
+# resource "aws_key_pair" "mtc_auth" {
+#     key_name = var.key_name
+#     public_key = var.public_key_pair
+# }
 
 
 # Create a ami profile
@@ -29,7 +29,7 @@ resource "aws_instance" "mtc_main" {
     count = var.main_instance_count
     instance_type = var.main_instance_type
     ami = data.aws_ami.server_ami.id
-    key_name = aws_key_pair.mtc_auth.id
+    key_name = "test_tf"
     vpc_security_group_ids = [aws_security_group.sgrp.id]
     subnet_id = aws_subnet.mtc_public_subnet[count.index].id
     # user_data = templatefile("./main_userdata.tpl", {new_hostname="mtc_main_gal-${random_id.mtc_mode_id[count.index].dec}"})
