@@ -1,58 +1,21 @@
 pipeline {
     agent any
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+        TF_IN_AUTOMATION = 'true'
+        TF_CLI_CONFIG_FILE = credentials('tfcloud')
+        ACCESS_KEY = credentials('aws-access')
+        SECRET_KEY = credentials('aws-sec')
     }
     stages {
-        stage ('checkout') {
+        stage('TF INIT'){
             steps{
-                checkout scmGit(branches: [[name: '*/gal_y']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/galdevops/red-project/']])
+                sh 'terraform init -no-color'
             }
         }
-        stage('build backend'){
+        stage('TF PLAN'){
             steps{
-                sh 'cd server && docker build -t galdevops/biu12_red_backend .'
+                sh "terraform plan -no-color -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
             }
-        }
-        stage('build frontend'){
-            steps{
-                sh 'cd frontend && docker build -t galdevops/biu12_red_frontend .'
-            }
-        }
-        stage('Login dockerhub') {
-            steps {
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-            }
-        }
-        stage('Push backend to dockerhub') {
-            steps {
-                sh 'docker push galdevops/biu12_red_backend'
-            }
-        }
-        stage('Push frontend to dockerhub') {
-            steps {
-                sh 'docker push galdevops/biu12_red_frontend'
-            }
-        }
-        stage('test'){
-            steps{
-                sh 'cd frontend/src'
-            }
-        }
-        stage('build image'){
-            steps{
-                sh 'ls'
-            }
-        }
-        stage('post'){
-            steps{
-                sh 'echo post'
-            }
-        }
-    }
-    post {
-        always {
-            sh 'docker logout'
         }
     }
 }
