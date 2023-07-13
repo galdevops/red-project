@@ -8,7 +8,7 @@ resource "random_id" "mtc_mode_id" {
 # Create a key pair for ssh connection
 resource "aws_key_pair" "mtc_auth" {
     key_name = var.key_name
-    public_key = file(var.public_key_path)
+    public_key = var.public_key_pair
 }
 
 

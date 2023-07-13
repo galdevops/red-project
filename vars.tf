@@ -57,6 +57,7 @@ variable "main_vol_size" {
 
 variable "key_name" {
   type    = string
+  default = "jentf_key"
     
 }
 
