@@ -34,7 +34,7 @@ pipeline {
         }
         stage('Ansible Test'){
             steps{
-                ansiblePlaybook(credentialsId: 'ec2-ssh', inventory: 'aws_host', playbook: 'playbooks/testans.yml')
+                ansiblePlaybook(credentialsId: 'ec2-ssh', inventory: 'aws_hosts', playbook: 'playbooks/testans.yml')
             }
         }
         stage('TF DESTROY'){
