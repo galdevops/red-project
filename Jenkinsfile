@@ -12,6 +12,11 @@ pipeline {
                 sh 'terraform init -no-color'
             }
         }
+        stage('TF DESTROY_1'){
+            steps{
+                sh "terraform destroy -no-color -auto-approve -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
+            }
+        }
         stage('TF PLAN'){
             steps{
                 sh "terraform plan -no-color -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
@@ -34,13 +39,13 @@ pipeline {
         }
         stage('Ansible Test'){
             steps{
-                ansiblePlaybook(credentialsId: 'ec2-ssh', inventory: 'aws_hosts', playbook: 'playbooks/testans.yml')
+                ansiblePlaybook(credentialsId: 'ec2-ssh', inventory: 'aws_hosts', playbook: 'playbooks/dockerans.yml')
             }
         }
-        stage('TF DESTROY'){
-            steps{
-                sh "terraform destroy -no-color -auto-approve -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
-            }
-        }
+        // stage('TF DESTROY'){
+        //     steps{
+        //         sh "terraform destroy -no-color -auto-approve -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
+        //     }
+        // }
     }
 }
