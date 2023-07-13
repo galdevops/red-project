@@ -12,11 +12,6 @@ pipeline {
                 sh 'terraform init -no-color'
             }
         }
-        stage('TF DESTROY_1'){
-            steps{
-                sh "terraform destroy -no-color -auto-approve -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
-            }
-        }
         stage('TF PLAN'){
             steps{
                 sh "terraform plan -no-color -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
@@ -35,6 +30,11 @@ pipeline {
         stage('Print IP'){
             steps{
                 sh "cat aws_hosts"
+            }
+        }
+        stage('Ansible Test'){
+            steps{
+                ansiblePlaybook(credentialsId: 'ec2-ssh', inventory: 'aws_host', playbook: 'playbooks/testans.yml')
             }
         }
         stage('TF DESTROY'){

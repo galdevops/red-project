@@ -1,0 +1,14 @@
+- hosts: main
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  tasks:
+    - name: display uptime
+      shell: uptime
+      register: uptime_1
+    - debug:
+        var: uptime_1
+    - name: display update
+      shell: date
+      register: date_2
+    - debug:
+        var: date_2
