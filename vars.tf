@@ -60,8 +60,3 @@ variable "key_name" {
   default = "jentf_key"
     
 }
-
-variable "public_key_path" {
-  type    = string
-    
-}
