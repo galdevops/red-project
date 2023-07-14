@@ -9,42 +9,42 @@
       apt:
         pkg:
           - apt-transport-https
-          - ca-certificates
-          - curl
-          - software-properties-common
-          - python3-pip
-          - virtualenv
-          - python3-setuptools
+          # - ca-certificates
+          # - curl
+          # - software-properties-common
+          # - python3-pip
+          # - virtualenv
+          # - python3-setuptools
         state: latest
         update_cache: true
 
-    - name: Add Docker GPG apt Key
-      apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        state: present
+    # - name: Add Docker GPG apt Key
+    #   apt_key:
+    #     url: https://download.docker.com/linux/ubuntu/gpg
+    #     state: present
 
-    - name: Add Docker Repository
-      apt_repository:
-        repo: deb https://download.docker.com/linux/ubuntu focal stable
-        state: present
+    # - name: Add Docker Repository
+    #   apt_repository:
+    #     repo: deb https://download.docker.com/linux/ubuntu focal stable
+    #     state: present
 
-    - name: Update apt and install docker-ce and docker-compose
-      apt:
-        pkg:
-          - docker-ce
-          - docker-compose
-        state: latest
-        update_cache: true
+    # - name: Update apt and install docker-ce and docker-compose
+    #   apt:
+    #     pkg:
+    #       - docker-ce
+    #       - docker-compose
+    #     state: latest
+    #     update_cache: true
 
-    - name: Install Docker Module for Python
-      pip:
-        name: docker
+    # - name: Install Docker Module for Python
+    #   pip:
+    #     name: docker
 
-    - name: Pull Frontend Docker image
-      command: docker pull galdevops/biu12_red_frontend:latest
+    # - name: Pull Frontend Docker image
+    #   command: docker pull galdevops/biu12_red_frontend:latest
 
-    - name: Build Frontend Docker container
-      command: docker run -d --name biu12-frontend -p 3000:3000 galdevops/biu12_red_frontend:latest
+    # - name: Build Frontend Docker container
+    #   command: docker run -d --name biu12-frontend -p 3000:3000 galdevops/biu12_red_frontend:latest
     
 
     # - name: Pull Backend Docker image
