@@ -29,6 +29,7 @@ resource "aws_instance" "mtc_main" {
     count = var.main_instance_count
     instance_type = var.main_instance_type
     ami = data.aws_ami.server_ami.id
+    # ami = "ami-06ca3ca175f37dd66"
     key_name = "test_tf"
     vpc_security_group_ids = [aws_security_group.sgrp.id]
     subnet_id = aws_subnet.mtc_public_subnet[count.index].id
