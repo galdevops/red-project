@@ -6,10 +6,6 @@
   vars:
     ansible_python_interpreter: /usr/bin/python3
   tasks:
-    - name: Download pip
-      apt:
-        name: python3-pip
-        state: present
     - name: Add Docker GPG apt Key
       apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
