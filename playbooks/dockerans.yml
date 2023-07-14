@@ -2,7 +2,7 @@
 - name: Bootstrap
   hosts: main
   gather_facts: False
-  become: yes
+  become: true
 
   tasks:
     - name: Install required system packages
