@@ -1,5 +1,2 @@
 [main]
-
-54.81.72.229
-[main:vars]
-ansible_ssh_user=ubuntu
+54.198.10.241
