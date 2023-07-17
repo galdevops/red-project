@@ -17,6 +17,7 @@ pipeline {
         stage('build frontend'){
             steps{
                 sh 'cd frontend && docker build -t galdevops/biu12_red_frontend .'
+                // sh 'cd frontend && docker build --build-arg server_ip={aws_hosts.main[0]} -t galdevops/biu12_red_frontend .'
             }
         }
         stage('Login dockerhub') {

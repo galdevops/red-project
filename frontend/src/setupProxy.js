@@ -5,6 +5,7 @@ module.exports = function(app) {
     '/api',
     createProxyMiddleware({
       target: 'http://backend:3001',
+      // target: `http://${process.env.REACT_APP_BACKEND}:3001`,
       changeOrigin: true,
     })
   );
