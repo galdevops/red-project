@@ -32,11 +32,11 @@ pipeline {
         //         sh "AWS_ACCESS_KEY_ID=${env.ACCESS_KEY} AWS_SECRET_ACCESS_KEY=${env.SECRET_KEY} aws ec2 wait instance-status-ok --region us-east-1"
         //     }
         // }
-        // stage('Ansible User'){
-        //     steps{
-        //         sh "cat user.txt >> aws_hosts"
-        //     }
-        // }
+        stage('Ansible User'){
+            steps{
+                sh "cat user.txt >> aws_hosts"
+            }
+        }
         stage('Inventory'){
             steps{
                 sh "cat aws_hosts"
