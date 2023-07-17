@@ -5,53 +5,70 @@
   become: true
 
   tasks:
-  - name: Install deps packages
-    package:
-      name: "{{item}}"
-      update_cache: true
-    loop:
-      - apt-transport-https
-      - ca-certificates
-      - curl
-      - software-properties-common
-      - python3-pip
-      - virtualenv
-      - python3-setuptools
-  - name: Add Docker GPG apt Key
-    apt_key:
-      url: https://download.docker.com/linux/ubuntu/gpg
-      state: present
+  # - name: Install deps packages
+  #   package:
+  #     name: "{{item}}"
+  #     update_cache: true
+  #   loop:
+  #     - apt-transport-https
+  #     - ca-certificates
+  #     - curl
+  #     - software-properties-common
+  #     - python3-pip
+  #     - virtualenv
+  #     - python3-setuptools
+  # - name: Add Docker GPG apt Key
+  #   apt_key:
+  #     url: https://download.docker.com/linux/ubuntu/gpg
+  #     state: present
 
-  - name: Add Docker Repository
-    apt_repository:
-      repo: deb https://download.docker.com/linux/ubuntu focal stable
-      state: present
+  # - name: Add Docker Repository
+  #   apt_repository:
+  #     repo: deb https://download.docker.com/linux/ubuntu focal stable
+  #     state: present
 
-  - name: Update apt and install docker-ce and docker-compose
-    apt:
-      pkg:
-        - docker-ce
-        - docker-compose
-      state: latest
-      update_cache: true
+  # - name: Update apt and install docker-ce and docker-compose
+  #   apt:
+  #     pkg:
+  #       - docker-ce
+  #       - docker-compose
+  #     state: latest
+  #     update_cache: true
 
-  - name: Install Docker Module for Python
-    pip:
-      name: docker
+  # - name: Install Docker Module for Python
+  #   pip:
+  #     name: docker
 
-  - name: Pull Backend Docker image
-    command: docker pull galdevops/biu12_red_backend:latest
-    when: inventory_hostname == groups['main'][0]
+  # - name: Pull Backend Docker image
+  #   command: docker pull galdevops/biu12_red_backend:latest
+  #   when: inventory_hostname == groups['main'][0]
 
-  - name: Build Backend Docker container
-    command: docker run -d --name biu12-backend -p 3000:3000 galdevops/biu12_red_frontend:latest
-    when: inventory_hostname == groups['main'][0]
+  # - name: Build Backend Docker container
+  #   command: docker run -d --name biu12-backend -p 3000:3000 galdevops/biu12_red_frontend:latest
+  #   when: inventory_hostname == groups['main'][0]
 
-  - name: Pull Frontend Docker image
-    command: docker pull galdevops/biu12_red_frontend:latest
+  # - name: Pull Frontend Docker image
+  #   command: docker pull galdevops/biu12_red_frontend:latest
+  #   when: inventory_hostname == groups['main'][1]
+
+  # - name: Build Frontend Docker container
+  #   command: docker run -d --name biu12-frontend -p 3000:3000 galdevops/biu12_red_frontend:latest
+  #   when: inventory_hostname == groups['main'][1]
+
+  # - name: Add backend ip to proxy
+  #   command: sed 's/backend/groups['main'][0]/g' src/setupProxy.js
+  #   when: inventory_hostname == groups['main'][1]
+  
+  - name: 1Add backend ip to proxy
+    command: ls
+    when: inventory_hostname == groups['main'][1]
+  
+  - name: 2Add backend ip to proxy
+    command: cd src
     when: inventory_hostname == groups['main'][1]
 
-  - name: Build Frontend Docker container
-    command: docker run -d --name biu12-frontend -p 3000:3000 galdevops/biu12_red_frontend:latest
+  
+  - name: 3Add backend ip to proxy
+    command: ls
     when: inventory_hostname == groups['main'][1]
   
