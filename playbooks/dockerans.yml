@@ -6,19 +6,19 @@
 
   tasks:
   - name: Install packages
-      package:
-        name: "{{item}}"
-        # state: present
-        # state: latest
-        update_cache: true
-      loop:
-        - apt-transport-https
-        - ca-certificates
-        - curl
-        - software-properties-common
-        - python3-pip
-        - virtualenv
-        - python3-setuptools
+    package:
+      name: "{{item}}"
+      # state: present
+      # state: latest
+      update_cache: true
+    loop:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - python3-pip
+      - virtualenv
+      - python3-setuptools
     # - name: Install required system packages
     #   apt:
     #     pkg:
