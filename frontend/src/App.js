@@ -30,6 +30,7 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
+          <h1>Hi DevSecOps12 Red-Project Implementation!</h1>
           <p>
             Edit <code>src/App.js</code> and save to reload.
           </p>
