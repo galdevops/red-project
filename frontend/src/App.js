@@ -19,6 +19,7 @@ class App extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
+    console.log('1: ', process.env.REACT_APP_BACKEND)
     fetch(`/api/greeting?name=${encodeURIComponent(this.state.name)}`)
       .then(response => response.json())
       .then(state => this.setState(state));

@@ -40,17 +40,17 @@
       name: docker
 
   - name: Pull Backend Docker image
-    command: docker pull galdevops/biu12_red_backend_03:latest
+    command: docker pull galdevops/biu12_red_backend_04:latest
     when: inventory_hostname == groups['main'][0]
 
   - name: Build Backend Docker container
-    command: docker run -d --name biu12-backend -p 3001:3001 galdevops/biu12_red_backend_03:latest
+    command: docker run -d --name biu12-backend -p 3001:3001 galdevops/biu12_red_backend_04:latest
     when: inventory_hostname == groups['main'][0]
 
   - name: Pull Frontend Docker image
-    command: docker pull galdevops/biu12_red_frontend_03:latest
+    command: docker pull galdevops/biu12_red_frontend_04:latest
     when: inventory_hostname == groups['main'][1]
 
   - name: Build Frontend Docker container
-    command: docker run -d --name biu12-frontend -p 3000:3000 galdevops/biu12_red_frontend_03:latest
+    command: docker run -d --name biu12-frontend -p 3000:3000 galdevops/biu12_red_frontend_04:latest
     when: inventory_hostname == groups['main'][1]
