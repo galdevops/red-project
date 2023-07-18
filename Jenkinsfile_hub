@@ -1,6 +1,7 @@
 pipeline {
     agent any
     environment {
+        SERVER_IP = "1"
         DOCKERHUB_CREDENTIALS = credentials('dockerhub')
     }
     stages {
@@ -11,12 +12,12 @@ pipeline {
         }
         stage('build backend'){
             steps{
-                sh 'cd server && docker build -t galdevops/biu12_red_backend .'
+                sh 'cd server && docker build -t galdevops/biu12_red_backend_01 .'
             }
         }
         stage('build frontend'){
             steps{
-                sh 'cd frontend && docker build -t galdevops/biu12_red_frontend .'
+                sh 'cd frontend && docker build -t galdevops/biu12_red_frontend_01 .'
                 // sh 'cd frontend && docker build --build-arg server_ip={aws_hosts.main[0]} -t galdevops/biu12_red_frontend .'
             }
         }
@@ -27,12 +28,12 @@ pipeline {
         }
         stage('Push backend to dockerhub') {
             steps {
-                sh 'docker push galdevops/biu12_red_backend'
+                sh 'docker push galdevops/biu12_red_backend_01'
             }
         }
         stage('Push frontend to dockerhub') {
             steps {
-                sh 'docker push galdevops/biu12_red_frontend'
+                sh 'docker push galdevops/biu12_red_frontend_01'
             }
         }
         stage('test'){
