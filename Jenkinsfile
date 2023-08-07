@@ -16,7 +16,7 @@ pipeline {
         }
         stage('Run images') {
             steps {
-                sh 'docker run -d -p3000:3000 israelma/red_project_front:${BUILDNUMBER}'
+                sh 'docker run -d -p3000:3000 israelma/red_project_front:v1'
                 sh 'sleep 5'
                 sh 'docker run -d -p3001:3001 israelma/red_project_server:v1'
                 sh 'sleep 5'
