@@ -11,7 +11,7 @@ resource "aws_instance" "mtc_main" {
     ami = "ami-03a4363a7d864a093"
     key_name = "test_tf"
     vpc_security_group_ids = [aws_security_group.sgrp.id]
-    # subnet_id = aws_subnet.mtc_public_subnet[count.index].id
+    subnet_id = aws_subnet.mtc_public_subnet[count.index].id
     root_block_device {
         volume_size = var.main_vol_size
     }
@@ -28,7 +28,6 @@ resource "aws_instance" "mtc_main" {
     
     provisioner "local-exec" {
         command = "printf '\n${self.public_ip}' >> aws_hosts"
-        # && aws ec2 wait instance-status-ok --instance-ids ${self.id} --region us-east-1"
     }
     
     provisioner "local-exec" {
