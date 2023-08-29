@@ -54,14 +54,14 @@ pipeline {
         }
         stage('build backend'){
             steps{
-                sh 'cd server && docker build -t galdevops/biu12_red_backend_07 .'
+                sh 'cd server && docker build -t galdevops/biu12_red_backend_08 .'
             }
         }
         stage('build frontend'){
             steps{
                 // sh 'cd frontend && docker build -t galdevops/biu12_red_frontend_01 .'
                 sh "echo ip: ${SERVER_IP}"
-                sh "cd frontend && docker build --build-arg server_ip=${SERVER_IP} -t galdevops/biu12_red_frontend_07 ."
+                sh "cd frontend && docker build --build-arg server_ip=${SERVER_IP} -t galdevops/biu12_red_frontend_08 ."
             }
         }
         stage('Login dockerhub') {
@@ -71,12 +71,12 @@ pipeline {
         }
         stage('Push backend to dockerhub') {
             steps {
-                sh 'docker push galdevops/biu12_red_backend_07'
+                sh 'docker push galdevops/biu12_red_backend_08'
             }
         }
         stage('Push frontend to dockerhub') {
             steps {
-                sh 'docker push galdevops/biu12_red_frontend_07'
+                sh 'docker push galdevops/biu12_red_frontend_08'
             }
         }
         stage('test'){
