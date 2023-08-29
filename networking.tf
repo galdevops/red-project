@@ -30,6 +30,7 @@ resource "aws_vpc" "mtc_vpc_f" {
 }
 
 
+
 # Create a gateway
 resource "aws_internet_gateway" "mtc_int_gtwy" {
   vpc_id = aws_vpc.mtc_vpc_f.id
@@ -37,6 +38,7 @@ resource "aws_internet_gateway" "mtc_int_gtwy" {
     Name = "gtwy_gal-${random_id.random.dec}"
   }
 }
+
 
 
 # Create a route_table
@@ -48,6 +50,8 @@ resource "aws_route_table" "public_route" {
 
 }
 
+
+
 # Create a public route
 resource "aws_route" "default_public_rt" {
   route_table_id         = aws_route_table.public_route.id
@@ -55,6 +59,8 @@ resource "aws_route" "default_public_rt" {
   gateway_id             = aws_internet_gateway.mtc_int_gtwy.id
 
 }
+
+
 
 # Create a private route
 resource "aws_default_route_table" "private_route" {
@@ -95,6 +101,7 @@ resource "aws_subnet" "mtc_private_subnet" {
 }
 
 
+
 resource "aws_route_table_association" "subnet_rt" {
   count = length(local.azs)
   subnet_id = aws_subnet.mtc_public_subnet[count.index].id
@@ -102,11 +109,14 @@ resource "aws_route_table_association" "subnet_rt" {
 }
 
 
+
 resource "aws_security_group" "sgrp" {
   name = "public_sg"
   description = "SG for public instances"
   vpc_id = aws_vpc.mtc_vpc_f.id
 }
+
+
 
 # Ingress to access instances to internal
 resource "aws_security_group_rule" "sg_ingress_all" {
@@ -117,6 +127,7 @@ resource "aws_security_group_rule" "sg_ingress_all" {
   cidr_blocks = [var.access_ip, var.hp_local_ip]
   security_group_id = aws_security_group.sgrp.id
 }
+
 
 
 # Egress to access instances to external
