@@ -23,13 +23,6 @@ variable "access_ip" {
 }
 
 
-variable "cloud9_ip" {
-  type    = string
-  default = "18.206.203.122/32"
-  
-}
-
-
 variable "hp_local_ip" {
   type    = string
   default = "62.0.133.161/32"
