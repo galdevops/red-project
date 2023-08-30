@@ -9,142 +9,148 @@ pipeline {
         SECRET_KEY = credentials('aws-sec')
     }
     stages {
-        stage('TF INIT'){
+        // Build images from docker files
+        stage('build images on local'){
             steps{
-                sh 'terraform init -no-color'
+                sh 'cd server && docker build -t galdevops/biu12_red_backend_local .'
+                sh 'sleep 5'
+                sh "cd frontend && docker build --build-arg server_ip=localhost -t galdevops/biu12_red_frontend_local ."
+                sh 'sleep 5'
             }
         }
-        stage('TF DESTROY_1'){
-            steps{
-                sh "terraform destroy -no-color -auto-approve -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
-            }
-        }
-        // stage('TF PLAN'){
-        //     steps{
-        //         sh "terraform plan -no-color -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
-        //     }
-        // }
-        // stage('TF APPLY'){
-        //     steps{
-        //         sh "terraform apply -no-color -auto-approve -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
-        //     }
-        // }
-        // stage('EC2 Wait'){
-        //     steps{
-        //         sh "AWS_ACCESS_KEY_ID=${env.ACCESS_KEY} AWS_SECRET_ACCESS_KEY=${env.SECRET_KEY} aws ec2 wait instance-status-ok --region us-east-1"
-        //     }
-        // }
-        // stage('Update Server IP'){
-        //     steps{
-        //         echo "sed -n '2p' aws_hosts"
-        //     }
-        // }
-        // stage("Test IP") {
-        //     steps {
-        //         echo "ip is '${SERVER_IP}'"
-                
-        //         script {
-        //             SERVER_IP = sh (
-        //                     script: "sed -n '2p' aws_hosts",
-        //                     returnStdout: true
-        //                 ).trim()
-        //                 echo "updated ip: ${SERVER_IP}"
-        //         }
-        //     }
-        // }
-        stage('Clean images') {
-            steps {
-                sh 'docker kill $(docker ps -q)'
-
-                sh 'echo docker rmi -f galdevops/biu12_red_backend_120'
-                sh 'echo docker rmi -f galdevops/biu12_red_frontend_120'
-                sh 'echo docker rmi -f galdevops/biu12_red_backend_10'
-                sh 'echo docker rmi -f galdevops/biu12_red_frontend_10'
-            }        
-        }
-        stage('build backend'){
-            steps{
-                sh 'cd server && docker build -t galdevops/biu12_red_backend_220 .'
-            }
-        }
-        stage('build frontend'){
-            steps{
-                // sh 'cd frontend && docker build -t galdevops/biu12_red_frontend_01 .'
-                // sh "echo ip: ${SERVER_IP}"
-                // sh "cd frontend && docker build --build-arg server_ip=${SERVER_IP} -t galdevops/biu12_red_frontend_09 ."
-                sh "cd frontend && docker build --build-arg server_ip=localhost -t galdevops/biu12_red_frontend_220 ."
-            }
-        }
+        // Run containers
         stage('Run images on local') {
             steps {
-                sh 'docker run -d -p3001:3001 galdevops/biu12_red_backend_220:latest'
+                sh 'docker run -d -p3001:3001 galdevops/biu12_red_backend_local:latest'
                 sh 'sleep 5'
-                sh 'docker run -d -p3000:3000 galdevops/biu12_red_frontend_220:latest'
+                sh 'docker run -d -p3000:3000 galdevops/biu12_red_frontend_local:latest'
                 sh 'sleep 5'
             }
         }
+        // Run tests -> Test connection
         stage('Test') {
             steps {
                 sh 'python3 -m pytest --junitxml=test-results.xml test/test.py'
             }   
         }
+        // Update success
         stage('Test alert'){
             steps{
-                echo "Test comppleted successfully, images will be removed"
+                echo "Test completed successfully, images will be removed"
             }
         }
+        // Remove images from local
         stage('Remove images') {
             steps {
                 sh 'docker kill $(docker ps -q)'
-                sh 'echo docker rmi -f galdevops/biu12_red_backend_220'
-                sh 'echo docker rmi -f galdevops/biu12_red_frontend_220'
+                sh 'echo docker rmi -f galdevops/biu12_red_backend_local'
+                sh 'echo docker rmi -f galdevops/biu12_red_frontend_local'
             }        
         }
-        // stage('Login dockerhub') {
-        //     steps {
-        //         sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-        //     }
-        // }
-        // stage('Push backend to dockerhub') {
-        //     steps {
-        //         sh 'docker push galdevops/biu12_red_backend_09'
-        //     }
-        // }
-        // stage('Push frontend to dockerhub') {
-        //     steps {
-        //         sh 'docker push galdevops/biu12_red_frontend_09'
-        //     }
-        // }
-        // stage('test'){
+        // Initiate TF - initializes a working directory containing TF configuration files
+        stage('TF INIT'){
+            steps{
+                sh 'terraform init -no-color'
+            }
+        }
+        // Terminates TF resources managed by TF project
+        stage('TF DESTROY_1'){
+            steps{
+                sh "terraform destroy -no-color -auto-approve -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
+            }
+        }
+        // Creates an execution plan, to preview the infrastructure changes that TF plans to make to apply.
+        stage('TF PLAN'){
+            steps{
+                sh "terraform plan -no-color -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
+            }
+        }
+        // Executes infrastructure changes to each TF resource
+        stage('TF APPLY'){
+            steps{
+                sh "terraform apply -no-color -auto-approve -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
+            }
+        }
+        // Wait for AWS instance creation is done before continue to the following steps
+        stage('EC2 Wait'){
+            steps{
+                sh "AWS_ACCESS_KEY_ID=${env.ACCESS_KEY} AWS_SECRET_ACCESS_KEY=${env.SECRET_KEY} aws ec2 wait instance-status-ok --region us-east-1"
+            }
+        }
+        // Copy IP - line 2 in file aws_hosts (public_ip was added by TF when backend instance was created)
+        // stage('Update Server IP'){
         //     steps{
-        //         sh 'cd frontend/src'
+        //         echo "sed -n '2p' aws_hosts"
         //     }
         // }
-        // stage('build image'){
-        //     steps{
-        //         sh 'ls'
-        //     }
-        // }
-        // stage('post'){
-        //     steps{
-        //         sh 'echo post'
-        //     }
-        // }
-        // stage('Ansible User'){
-        //     steps{
-        //         sh "cat user.txt >> aws_hosts"
-        //     }
-        // }
-        // stage('Inventory'){
-        //     steps{
-        //         sh "cat aws_hosts"
-        //     }
-        // }
-        // stage('Ansible Test'){
-        //     steps{
-        //         ansiblePlaybook(credentialsId: 'ec2-ssh', inventory: 'aws_hosts', playbook: 'playbooks/dockerans.yml')
-        //     }
-        // }
+        // Copy IP - line 2 in file aws_hosts (public_ip was added by TF when backend instance was created)
+        // Paste IP - assign IP to Jenkins VAR.SERVER_IP
+        stage("Test IP") {
+            steps {
+                script {
+                    SERVER_IP = sh (
+                            script: "sed -n '2p' aws_hosts",
+                            returnStdout: true
+                        ).trim()
+                        echo "updated ip: ${SERVER_IP}"
+                }
+            }
+        }
+        // Build backend image from docker file
+        stage('build aws backend'){
+            steps{
+                sh 'cd server && docker build -t galdevops/biu12_red_backend_11 .'
+            }
+        }
+        // Build frontend image from docker file, pass backend_instance_ip as argument
+        stage('build aws frontend'){
+            steps{
+                sh "echo ip: ${SERVER_IP}"
+                sh "cd frontend && docker build --build-arg server_ip=${SERVER_IP} -t galdevops/biu12_red_frontend_11 ."
+            }
+        }
+        // Login to dockerhub with jenkins creds
+        stage('Login dockerhub') {
+            steps {
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+            }
+        }
+        // Push backend image to dockerhub
+        stage('Push backend to dockerhub') {
+            steps {
+                sh 'docker push galdevops/biu12_red_backend_11'
+            }
+        }
+        // Push frontend image to dockerhub
+        stage('Push frontend to dockerhub') {
+            steps {
+                sh 'docker push galdevops/biu12_red_frontend_11'
+            }
+        }
+        // Add Ansible settings to aws_hosts file - to be applied on aws instance group
+        stage('Ansible User'){
+            steps{
+                sh "cat user.txt >> aws_hosts"
+            }
+        }
+        // Print aws_hosts file to view Ansible inventory
+        stage('Inventory'){
+            steps{
+                sh "cat aws_hosts"
+            }
+        }
+        // Execute Ansible script
+        stage('Ansible Execution'){
+            steps{
+                ansiblePlaybook(credentialsId: 'ec2-ssh', inventory: 'aws_hosts', playbook: 'playbooks/dockerans.yml')
+            }
+        }
+        // Update success
+        stage('Completed alert'){
+            steps{
+                echo "You can now test aws instances"
+            }
+        }
         // stage('TF DESTROY'){
         //     steps{
         //         sh "terraform destroy -no-color -auto-approve -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"

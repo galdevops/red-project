@@ -5,6 +5,7 @@
   become: true
 
   tasks:
+  # Install needed packages for docker
   - name: Install deps packages
     package:
       name: "{{item}}"
@@ -17,16 +18,20 @@
       - python3-pip
       - virtualenv
       - python3-setuptools
+  
+  # Add needed package for docker
   - name: Add Docker GPG apt Key
     apt_key:
       url: https://download.docker.com/linux/ubuntu/gpg
       state: present
 
+  # Get docker repo
   - name: Add Docker Repository
     apt_repository:
       repo: deb https://download.docker.com/linux/ubuntu focal stable
       state: present
 
+  # Update & install docker packages
   - name: Update apt and install docker-ce and docker-compose
     apt:
       pkg:
@@ -35,22 +40,27 @@
       state: latest
       update_cache: true
 
+  # Install docker using pip
   - name: Install Docker Module for Python
     pip:
       name: docker
 
+  # Pull Backend Docker image to aws_backend_instance (1st public_ip in aws_hosts file)
   - name: Pull Backend Docker image
-    command: docker pull galdevops/biu12_red_backend_09:latest
+    command: docker pull galdevops/biu12_red_backend_11:latest
     when: inventory_hostname == groups['main'][0]
 
-  - name: Build Backend Docker container
-    command: docker run -d --name biu12-backend -p 3001:3001 galdevops/biu12_red_backend_09:latest
+  # Run Backend container on aws_backend_instance (1st public_ip in aws_hosts file)
+  - name: Run Backend Docker container
+    command: docker run -d --name biu12-backend -p 3001:3001 galdevops/biu12_red_backend_11:latest
     when: inventory_hostname == groups['main'][0]
 
+  # Pull Frontend Docker image to aws_backend_instance (2nd public_ip in aws_hosts file)
   - name: Pull Frontend Docker image
-    command: docker pull galdevops/biu12_red_frontend_09:latest
+    command: docker pull galdevops/biu12_red_frontend_11:latest
     when: inventory_hostname == groups['main'][1]
 
+  # Run Frontend container on aws_backend_instance (2nd public_ip in aws_hosts file)
   - name: Build Frontend Docker container
-    command: docker run -d --name biu12-frontend -p 3000:3000 galdevops/biu12_red_frontend_09:latest
+    command: docker run -d --name biu12-frontend -p 3000:3000 galdevops/biu12_red_frontend_11:latest
     when: inventory_hostname == groups['main'][1]
