@@ -52,7 +52,7 @@ pipeline {
         //         }
         //     }
         // }
-        stage('Remove images') {
+        stage('Clean images') {
             steps {
                 sh 'docker kill $(docker ps -q)'
 
