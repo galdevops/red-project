@@ -52,18 +52,44 @@ pipeline {
         //         }
         //     }
         // }
-        // stage('build backend'){
-        //     steps{
-        //         sh 'cd server && docker build -t galdevops/biu12_red_backend_09 .'
-        //     }
-        // }
-        // stage('build frontend'){
-        //     steps{
-        //         // sh 'cd frontend && docker build -t galdevops/biu12_red_frontend_01 .'
-        //         sh "echo ip: ${SERVER_IP}"
-        //         sh "cd frontend && docker build --build-arg server_ip=${SERVER_IP} -t galdevops/biu12_red_frontend_09 ."
-        //     }
-        // }
+        stage('build backend'){
+            steps{
+                sh 'cd server && docker build -t galdevops/biu12_red_backend_10 .'
+            }
+        }
+        stage('build frontend'){
+            steps{
+                // sh 'cd frontend && docker build -t galdevops/biu12_red_frontend_01 .'
+                // sh "echo ip: ${SERVER_IP}"
+                // sh "cd frontend && docker build --build-arg server_ip=${SERVER_IP} -t galdevops/biu12_red_frontend_09 ."
+                sh "cd frontend && docker build --build-arg server_ip=localhost -t galdevops/biu12_red_frontend_10 ."
+            }
+        }
+        stage('Run images on local') {
+            steps {
+                sh 'docker run -d -p3000:3000 galdevops/biu12_red_backend_10:latest'
+                sh 'sleep 5'
+                sh 'docker run -d -p3001:3001 galdevops/biu12_red_frontend_10:latest'
+                sh 'sleep 5'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'python3 -m pytest --junitxml=test-results.xml test/test.py'
+            }   
+        }
+        stage('Test alert'){
+            steps{
+                echo "Test comppleted successfully, images will be removed"
+            }
+        }
+        stage('Remove images') {
+            steps {
+                sh 'docker kill $(docker ps -q)'
+                sh 'echo docker rmi -f israelma/red_project_front:v1'
+                sh 'echo docker rmi -f israelma/red_project_server:v1'
+            }        
+        }
         // stage('Login dockerhub') {
         //     steps {
         //         sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
