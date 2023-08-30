@@ -1,10 +1,13 @@
+# Hebrew Guide - https://softwarearchiblog.com/2016/06/aws-virtual-private-cloud.html
+# Subnet VPC Guide - https://medium.com/fintechexplained/what-is-aws-vpc-and-subnets-43eb67bea492
+
 # Create a local var
 locals {
   azs = data.aws_availability_zones.available.names
 }
 
 
-# Create a availability zone
+# Declare a availability zone
 data "aws_availability_zones" "available" {}
 
 
@@ -111,7 +114,7 @@ resource "aws_route_table_association" "subnet_rt" {
 }
 
 
-# Needed to be related to vpc
+# security_group is a firewall for traffic control = traffic allowed to and from the resources in your virtual private cloud (VPC).
 resource "aws_security_group" "sgrp" {
   name = "public_sg"
   description = "SG for public instances"

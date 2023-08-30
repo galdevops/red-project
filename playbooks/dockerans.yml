@@ -47,20 +47,20 @@
 
   # Pull Backend Docker image to aws_backend_instance (1st public_ip in aws_hosts file)
   - name: Pull Backend Docker image
-    command: docker pull galdevops/biu12_red_backend_11:latest
+    command: docker pull galdevops/biu12_red_backend_01:latest
     when: inventory_hostname == groups['main'][0]
 
   # Run Backend container on aws_backend_instance (1st public_ip in aws_hosts file)
   - name: Run Backend Docker container
-    command: docker run -d --name biu12-backend -p 3001:3001 galdevops/biu12_red_backend_11:latest
+    command: docker run -d --name biu12-backend -p 3001:3001 galdevops/biu12_red_backend_01:latest
     when: inventory_hostname == groups['main'][0]
 
   # Pull Frontend Docker image to aws_backend_instance (2nd public_ip in aws_hosts file)
   - name: Pull Frontend Docker image
-    command: docker pull galdevops/biu12_red_frontend_11:latest
+    command: docker pull galdevops/biu12_red_frontend_01:latest
     when: inventory_hostname == groups['main'][1]
 
   # Run Frontend container on aws_backend_instance (2nd public_ip in aws_hosts file)
   - name: Build Frontend Docker container
-    command: docker run -d --name biu12-frontend -p 3000:3000 galdevops/biu12_red_frontend_11:latest
+    command: docker run -d --name biu12-frontend -p 3000:3000 galdevops/biu12_red_frontend_01:latest
     when: inventory_hostname == groups['main'][1]
