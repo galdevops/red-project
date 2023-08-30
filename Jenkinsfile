@@ -54,7 +54,7 @@ pipeline {
         // }
         stage('build backend'){
             steps{
-                sh 'cd server && docker build -t galdevops/biu12_red_backend_10 .'
+                sh 'cd server && docker build -t galdevops/biu12_red_backend_120 .'
             }
         }
         stage('build frontend'){
@@ -62,14 +62,14 @@ pipeline {
                 // sh 'cd frontend && docker build -t galdevops/biu12_red_frontend_01 .'
                 // sh "echo ip: ${SERVER_IP}"
                 // sh "cd frontend && docker build --build-arg server_ip=${SERVER_IP} -t galdevops/biu12_red_frontend_09 ."
-                sh "cd frontend && docker build --build-arg server_ip=localhost -t galdevops/biu12_red_frontend_10 ."
+                sh "cd frontend && docker build --build-arg server_ip=localhost -t galdevops/biu12_red_frontend_120 ."
             }
         }
         stage('Run images on local') {
             steps {
-                sh 'docker run -d -p3000:3000 galdevops/biu12_red_backend_10:latest'
+                sh 'docker run -d -p3001:3001 galdevops/biu12_red_backend_120:latest'
                 sh 'sleep 5'
-                sh 'docker run -d -p3001:3001 galdevops/biu12_red_frontend_10:latest'
+                sh 'docker run -d -p3000:3000 galdevops/biu12_red_frontend_120:latest'
                 sh 'sleep 5'
             }
         }
