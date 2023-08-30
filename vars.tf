@@ -18,11 +18,11 @@ variable "secret_key" {
 # set local machine ip for private secure access
 variable "access_ip" {
   type    = string
-  default = "0.0.0.0/0"
-    
+  default = "0.0.0.0/0" 
 }
 
 
+# set local machine ip for private secure access
 variable "hp_local_ip" {
   type    = string
   default = "62.0.133.161/32"

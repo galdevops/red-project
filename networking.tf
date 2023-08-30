@@ -4,9 +4,6 @@ locals {
 }
 
 
-# Create a availability zone
-data "aws_availability_zones" "available" {}
-
 # Create a rnd, for version tag
 resource "random_id" "random" {
   byte_length = 2
@@ -109,7 +106,7 @@ resource "aws_route_table_association" "subnet_rt" {
 }
 
 
-
+# Needed to be related to vpc
 resource "aws_security_group" "sgrp" {
   name = "public_sg"
   description = "SG for public instances"
@@ -118,19 +115,20 @@ resource "aws_security_group" "sgrp" {
 
 
 
-# Ingress to access instances to internal
+# VPC_SG - Ingress Rule - IPs that can access instances
 resource "aws_security_group_rule" "sg_ingress_all" {
   type = "ingress"
   from_port = "0"
   to_port = "65535"
   protocol = "-1"
-  cidr_blocks = [var.access_ip, var.hp_local_ip]
+  # cidr_blocks = [var.access_ip, var.hp_local_ip]
+  cidr_blocks = [var.hp_local_ip]
   security_group_id = aws_security_group.sgrp.id
 }
 
 
 
-# Egress to access instances to external
+# VPC_SG - Egress Rule - instances can connect to external IPs
 resource "aws_security_group_rule" "sg_egress_all" {
   type = "egress"
   from_port = 0
