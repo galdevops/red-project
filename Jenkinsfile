@@ -12,9 +12,10 @@ pipeline {
                 sh 'terraform init -no-color'
             }
         }
-        stage('TF DESTROY'){
+        // Terminates TF resources managed by TF project
+        stage('TF DESTROY_1'){
             steps{
-                sh "terraform destroy -no-color -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
+                sh "terraform destroy -no-color -auto-approve -var 'access_key=${env.ACCESS_KEY}' -var 'secret_key=${env.SECRET_KEY}'"
             }
         }
     }

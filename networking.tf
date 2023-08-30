@@ -4,6 +4,11 @@ locals {
 }
 
 
+# Create a availability zone
+data "aws_availability_zones" "available" {}
+
+
+
 # Create a rnd, for version tag
 resource "random_id" "random" {
   byte_length = 2
