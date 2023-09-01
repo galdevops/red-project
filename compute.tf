@@ -37,5 +37,5 @@ resource "aws_instance" "mtc_main" {
 }
 
 output "tf_flow_completed" {
-    value = {for i in aws_instance.mtc_main[*] : i.tags.Name => "${i.public_ip}:3000"}
+    value = {for i in aws_instance.mtc_main[*] : i.tags.Name => "${i.tags.Name} instance up - ${i.public_ip}"}
 }
