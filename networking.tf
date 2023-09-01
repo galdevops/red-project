@@ -1,5 +1,6 @@
 # Hebrew Guide - https://softwarearchiblog.com/2016/06/aws-virtual-private-cloud.html
 # Subnet VPC Guide - https://medium.com/fintechexplained/what-is-aws-vpc-and-subnets-43eb67bea492
+# https://israelaws.wordpress.com/2017/09/30/amazon-virtual-private-cloud-vpc-%D7%97%D7%9C%D7%A7-%D7%90/
 
 # Create a local var
 locals {
@@ -19,7 +20,7 @@ resource "random_id" "random" {
 
 
 
-# Create a VPC
+# Create a VPC - personal virtual nt within aws
 resource "aws_vpc" "mtc_vpc_f" {
   cidr_block           = var.vpc_cidr
   enable_dns_hostnames = true
@@ -35,49 +36,7 @@ resource "aws_vpc" "mtc_vpc_f" {
 }
 
 
-
-# Create a gateway
-resource "aws_internet_gateway" "mtc_int_gtwy" {
-  vpc_id = aws_vpc.mtc_vpc_f.id
-  tags = {
-    Name = "gtwy_gal-${random_id.random.dec}"
-  }
-}
-
-
-
-# Create a route_table
-resource "aws_route_table" "public_route" {
-  vpc_id = aws_vpc.mtc_vpc_f.id
-  tags = {
-    Name = "prt_gal-${random_id.random.dec}"
-  }
-
-}
-
-
-
-# Create a public route
-resource "aws_route" "default_public_rt" {
-  route_table_id         = aws_route_table.public_route.id
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = aws_internet_gateway.mtc_int_gtwy.id
-
-}
-
-
-
-# Create a private route
-resource "aws_default_route_table" "private_route" {
-  default_route_table_id = aws_vpc.mtc_vpc_f.default_route_table_id
-  tags = {
-    Name = "private_rt_gal-${random_id.random.dec}"
-  }
-}
-
-
-
-# Create a public subnet
+# Create a public subnet - ip range addresses to vpc (to enable rds, ec2, etc.) for public use
 resource "aws_subnet" "mtc_public_subnet" {
   count = length(local.azs)
   vpc_id                  = aws_vpc.mtc_vpc_f.id
@@ -92,7 +51,7 @@ resource "aws_subnet" "mtc_public_subnet" {
 
 
 
-# Create a private subnet
+# Create a private subnet - ip range addresses to vpc (to enable rds, ec2, etc.) for private use
 resource "aws_subnet" "mtc_private_subnet" {
   count = length(local.azs)
   vpc_id                  = aws_vpc.mtc_vpc_f.id
@@ -107,6 +66,54 @@ resource "aws_subnet" "mtc_private_subnet" {
 
 
 
+# Create a route_table - Set of routing rules (routes) applied on subnet to determine network traffic
+resource "aws_route_table" "public_route" {
+  vpc_id = aws_vpc.mtc_vpc_f.id
+  tags = {
+    Name = "prt_gal-${random_id.random.dec}"
+  }
+
+}
+
+
+
+# Create a gateway - Destination for routing tables of vpc
+# enable network communication within vpc resources (ec2, etc.)
+# translate private ip to public ip and map connectivity for the following requests
+resource "aws_internet_gateway" "mtc_int_gtwy" {
+  vpc_id = aws_vpc.mtc_vpc_f.id
+  tags = {
+    Name = "gtwy_gal-${random_id.random.dec}"
+  }
+}
+
+
+
+
+# Create a public route - route network traffic to gateway - enable traffic access
+# assign route to vpc's gateaway
+resource "aws_route" "default_public_rt" {
+  route_table_id         = aws_route_table.public_route.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.mtc_int_gtwy.id
+
+}
+
+
+
+# Create a private route - no route network traffic to gateway - disable traffic access
+resource "aws_default_route_table" "private_route" {
+  default_route_table_id = aws_vpc.mtc_vpc_f.default_route_table_id
+  tags = {
+    Name = "private_rt_gal-${random_id.random.dec}"
+  }
+}
+
+
+
+
+
+# assosiate table to public subnet - table has rule to allow traffic
 resource "aws_route_table_association" "subnet_rt" {
   count = length(local.azs)
   subnet_id = aws_subnet.mtc_public_subnet[count.index].id

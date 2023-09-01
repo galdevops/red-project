@@ -1,3 +1,4 @@
+# classless inter-domain routing - ipv4 range addresses (16 or 28)
 variable "vpc_cidr" {
   type    = string
   default = "10.112.0.0/16"
