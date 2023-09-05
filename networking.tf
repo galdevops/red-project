@@ -36,7 +36,7 @@ resource "aws_vpc" "mtc_vpc_f" {
 }
 
 
-# Create a public subnet - ip range addresses to vpc (to enable rds, ec2, etc.) for public use
+# Create a public subnet - range of ip addresses to vpc (to enable rds, ec2, etc.) for public use
 resource "aws_subnet" "mtc_public_subnet" {
   count = length(local.azs)
   vpc_id                  = aws_vpc.mtc_vpc_f.id
@@ -51,7 +51,7 @@ resource "aws_subnet" "mtc_public_subnet" {
 
 
 
-# Create a private subnet - ip range addresses to vpc (to enable rds, ec2, etc.) for private use
+# Create a private subnet - range of ip addresses to vpc (to enable rds, ec2, etc.) for private use
 resource "aws_subnet" "mtc_private_subnet" {
   count = length(local.azs)
   vpc_id                  = aws_vpc.mtc_vpc_f.id
